@@ -163,6 +163,56 @@ public class forgot_password {
         }
    return "done";
     }
+    public static String smsverify( String username1) throws IOException, SQLException {
+        String apiURL = "http://192.168.46.233:13013/cgi-bin/sendsms";
+        String username = "tester";
+        String password = "foobar";
+        String otpc = generateOTP();
+        String otp = "otp :" + otpc;
+        String text = URLEncoder.encode("'" + otp + "'", StandardCharsets.UTF_8.toString());
+        retrievedinfo uspa=new retrievedinfo(0,username1,null,null,0);
+        uspa=idphnfind(uspa);
+        String phn = uspa.getPhoneno();
+        int id=uspa.getId();
+
+        String to = phn;
+        System.out.println(phn);
+
+
+        try {
+            String urlString = String.format("%s?username=%s&password=%s&coding=0&text=%s&to=%s",
+                    apiURL, username, password, text, to);
+            System.out.println(otp);
+            URL url = new URL(urlString);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+            System.out.println("Response Code: " + responseCode);
+            otppassword otpp=new otppassword(id,otpc,0);
+            ObjectMapper objectMapper=new ObjectMapper();
+            objectMapper.writeValue(new File("otpc.json"),otpp);
+
+
+
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                StringBuilder response = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                System.out.printf("Response: %s%n", response);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "done";
+    }
 
 
     private static String generateOTP() {

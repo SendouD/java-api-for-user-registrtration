@@ -11,8 +11,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import static com.example.demo.Main.*;
-import static com.example.demo.src.forgot_password.sessionTimer;
-import static com.example.demo.src.forgot_password.xorencryptpassword;
+import static com.example.demo.src.forgot_password.*;
 
 @RestController
 @RequestMapping("/login")
@@ -30,7 +29,22 @@ public class api {
 
     }
     @PostMapping("/getuserinfo")
-    public Object getuser(@RequestParam String username,@RequestParam String password) throws SQLException {
+    public Object getuser(@RequestParam String username,@RequestParam String password) throws SQLException, IOException {
+            String url="smscheck?username="+username+"&password="+password;
+            smsverify(username);
+            return new RedirectView(url);
+
+    }
+    @GetMapping("/smscheck")
+    public  Object smsck(@RequestParam String username,@RequestParam String password,@RequestParam String otp) throws SQLException, IOException {
+
+        ObjectMapper objectMapper=new ObjectMapper();
+        otppassword otppass=objectMapper.readValue(new File("otpc.json"),otppassword.class);
+        System.out.println("Enter otp");
+        String ckotp = otppass.getOtp();
+        if(!ckotp.equals(otp)){
+            return "incorrect otp";
+        }
         this.retrievedinfo=new retrievedinfo(0,null,null,null,0);
         retrievedinfo=getUserInformation(username,password, retrievedinfo);
         if (retrievedinfo == null) {
@@ -40,10 +54,11 @@ public class api {
             }
             return i==1?"So many attempts Try again after some time ":"Incorrect password";
         } else {
+
             return retrievedinfo;
         }
-    }
 
+    }
     @GetMapping("/resetmode")
     public RedirectView resetmode(@RequestParam int op,@RequestParam String username) {
         String ckck = sessionTimer(op, username);
