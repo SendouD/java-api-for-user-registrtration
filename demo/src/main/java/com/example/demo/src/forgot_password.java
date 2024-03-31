@@ -1,5 +1,4 @@
 package com.example.demo.src;
-
 import com.example.demo.model.otppassword;
 import com.example.demo.model.retrievedinfo;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
@@ -81,8 +80,10 @@ public class forgot_password {
     }
 
     public static String mailhosting(String receivermailid, int id, long sessionStartTime) {
-        String sendermailid = "mis@cdot.in";
-        String host = "49.128.111.121";
+        //     sender mail id
+        String sendermailid = "";
+        //        host ip
+        String host = "";
         Properties properties = System.getProperties();
         properties.setProperty("mail.smtp.host", host);
         Session session = Session.getDefaultInstance(properties);
@@ -119,7 +120,9 @@ public class forgot_password {
     }
 
     private static String smsSender( long sessionStartTime,int id,String phn) throws IOException {
-        String apiURL = "http://192.168.46.233:13013/cgi-bin/sendsms";
+        //        sms api URL
+        String apiURL = "";
+
         String username = "tester";
         String password = "foobar";
         String otpc = generateOTP();
@@ -164,7 +167,8 @@ public class forgot_password {
    return "done";
     }
     public static String smsverify( String username1) throws IOException, SQLException {
-        String apiURL = "http://192.168.46.233:13013/cgi-bin/sendsms";
+        //        sms api URL
+        String apiURL = "";
         String username = "tester";
         String password = "foobar";
         String otpc = generateOTP();
